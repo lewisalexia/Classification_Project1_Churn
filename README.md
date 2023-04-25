@@ -48,8 +48,14 @@ My initial hypothesis is that customers are churning because of monthly contract
  
 # Data Dictionary
 
-**INSERT TABLE HERE**
- 
+| Feature | Definition |
+|:--------|:-----------|
+|Tech Support| Whether or not the customer has technical support|
+|Tenure| Number of months the customer has stayed with the company|
+|Internet Service - Fiber Optic| Customer’s internet service provider (DSL, Fiber Optic, None)|
+|Total Charges| The total charges a customer has paid|
+|Contract Type| Monthly, One Year or Two Year options|
+
 # Steps to Reproduce
 1) Clone this repo.
 2) Acquire the data from MySQL servers using your own Codeup credentials stored in an env.py file.
