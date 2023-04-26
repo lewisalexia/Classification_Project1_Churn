@@ -1,7 +1,7 @@
 # To Churn or not to Churn: Telco
 # Project Description
  
-Telco has been experiencing high amounts of customer churn in the past month. 
+Telco has been experiencing high amounts of customer churn in the past year. 
  
 # Project Goal
  
@@ -12,11 +12,11 @@ Telco has been experiencing high amounts of customer churn in the past month.
  
 # Initial Thoughts
  
-My initial hypothesis is that customers are churning because of monthly contract availability and associated cost.
+My initial hypothesis is that internet customers are churning because of monthly contract cost.
  
 # The Plan
  
-* Aquire data from MySQL Server (using Codeup credentials in env.py file).
+* Acquire data from MySQL Server (using Codeup credentials in env.py file).
  
 * Prepare data
    * Look at the data frame's info and note:
@@ -30,10 +30,9 @@ My initial hypothesis is that customers are churning because of monthly contract
    * Answer the following initial questions:
        * How often does churn occur?
        * Does contract type affect churn?
-       * Does age affect churn?
-       * Does being single or having dependents affect churn?
-       * Does payment type affect churn?
+       * Does multiple services affect churn?
        * Does internet type affect churn?
+       * Are any columns dependent on others?
        
 * Develop a Model to predict if a customer will churn:
    * Use drivers identified in the explore phase to build predictive models of different types.
