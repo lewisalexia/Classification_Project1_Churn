@@ -532,3 +532,36 @@ def all_4_classifiers(train, validate, nn):
     
     #classification report
     print(classification_report(y_validate, logit2.predict(X_validate)))
+
+def to_csv(train, test):
+# create a dataframe with customer_id , probability of churn, and prediction
+    from sklearn.ensemble import RandomForestClassifier
+    import pandas as pd
+    X_train = train[[
+        'phone_service',
+        'multiple_lines',
+        'monthly_charges',
+        'total_charges',
+        'contract_type_One year',
+        'contract_type_Two year',
+        'internet_service_type_Fiber optic',
+        'internet_service_type_None']]
+    X_test = test[[
+        'phone_service',
+        'multiple_lines',
+        'monthly_charges',
+        'total_charges',
+        'contract_type_One year',
+        'contract_type_Two year',
+        'internet_service_type_Fiber optic',
+        'internet_service_type_None']]
+    y_train = train['churn']
+    y_test = test['churn']
+    rf = RandomForestClassifier(random_state = 123,max_depth = 6)
+    rf.fit(X_test, y_test)
+    prediction_df = pd.DataFrame({'customer_id': test.customer_id,
+                                  'probability_of_churn': rf.predict_proba(X_test)[:,1],
+                                  'prediction_of_churn': rf.predict(X_test)})
+    prediction_df
+    # export the dataframe to csv
+    prediction_df.to_csv('predictions.csv')
