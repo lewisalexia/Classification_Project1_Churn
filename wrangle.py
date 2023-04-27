@@ -60,8 +60,6 @@ def get_telco_churn():
 
 # PREPARE FUNCTIONS
 
-
-
 def clean_telco(df):
     '''This function will clean the telco_churn data'''
     
@@ -69,19 +67,19 @@ def clean_telco(df):
     df.total_charges = pd.to_numeric(df['total_charges'], errors='coerce')
 
     # fill n/a values in total_charges
-    df.total_charges.fillna(df.monthly_charges)
+    df.total_charges = df.total_charges.fillna(df.monthly_charges)
     
     # dropping columns
     df = df.drop(columns=['contract_type_id','internet_service_type_id','payment_type_id'])
 
-    # encoding
+    # encoding and clean up
     df.gender = pd.get_dummies(df[['gender']], drop_first=True)
 
-    df.partner = df.partner.replace('Yes',1).replace('No',0)
+    df.partner = pd.get_dummies(df['partner'], drop_first=True)
 
-    df.dependents = df.dependents.replace('Yes',1).replace('No',0)
+    df.dependents = pd.get_dummies(df['dependents'], drop_first=True)
 
-    df.phone_service = df.phone_service.replace('Yes',1).replace('No',0)
+    df.phone_service = pd.get_dummies(df['phone_service'], drop_first=True)
 
     df.online_security = df.online_security.replace('Yes',1).replace('No',0).replace('No internet service',0)
 
@@ -95,14 +93,13 @@ def clean_telco(df):
 
     df.streaming_movies = df.streaming_movies.replace('Yes',1).replace('No',0).replace('No internet service',0)
 
-    df.paperless_billing = df.paperless_billing.replace('Yes',1).replace('No',0)
+    df.paperless_billing = pd.get_dummies(df['paperless_billing'], drop_first=True)
 
-    df.churn = df.churn.replace('Yes',1).replace('No',0)
+    df.churn = pd.get_dummies(df['churn'], drop_first=True)
 
     df.multiple_lines = df.multiple_lines.replace('No phone service',0).replace('Yes',1).replace('No',0)
 
-    # get dummies for categoricals
-    dummy_df = pd.get_dummies(df[['contract_type','payment_type','internet_service_type']], dummy_na=False, drop_first=[True, True, True])
+    dummy_df = pd.get_dummies(df[['contract_type','payment_type','internet_service_type']], dummy_na=False, drop_first=[False, False, False])
 
     # clean up and return final product
     df = pd.concat([df, dummy_df], axis=1)
@@ -128,7 +125,16 @@ def split_telco(df):
                                        test_size=.25, 
                                        random_state=123, 
                                        stratify=train.churn)
-    
-    print(train.shape, validate.shape, test.shape)
+    #convert total charges to float
+    df.total_charges = pd.to_numeric(df['total_charges'], errors='coerce')
 
+    # fill n/a values in total_charges
+    train.total_charges.fillna(train.monthly_charges)
+    validate.total_charges.fillna(validate.monthly_charges)
+    test.total_charges.fillna(test.monthly_charges)
+    
+    print(f'Prepared DF: {df.shape}')
+    print(f'Train: {train.shape}')
+    print(f'Validate: {validate.shape}')
+    print(f'Test: {test.shape}')
     return train, validate, test

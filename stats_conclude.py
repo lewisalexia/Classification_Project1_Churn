@@ -11,16 +11,16 @@ def chi2_test(table):
     """
     α = 0.05
     chi2, pval, degf, expected = stats.chi2_contingency(table)
-    print('Observed')
-    print(table.values)
-    print('\nExpected')
-    print(expected.astype(int))
-    print('\n----')
-    print(f'chi^2 = {chi2:.4f}')
-    print(f'p-value = {pval} < {α}')
+    # print('Observed')
+    # print(table.values)
+    # print('\nExpected')
+    # print(expected.astype(int))
+    # print('\n----')
+    # print(f'chi^2 = {chi2:.4f}')
+    # print(f'p-value = {pval} < {α}')
     print('----')
     if pval < α:
-        print ('We reject the null hypothesis.')
+        print ('We reject the null hypothesis. Phone and Fiber are related.')
     else:
         print ("We fail to reject the null hypothesis.")
 

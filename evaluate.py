@@ -139,6 +139,44 @@ def random_forest_eval(X_train, y_train, X_validate, y_validate):
     plt.show()   
 
 
+def random_forest_test(test):
+    """This function creates the test dataframe and tests the selected model"""
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import classification_report
+    import warnings
+    warnings.filterwarnings("ignore")
+
+    X_test = test[[
+    'phone_service',
+    'multiple_lines',
+    'monthly_charges',
+    'total_charges',
+    'contract_type_One year',
+    'contract_type_Two year',
+    'internet_service_type_Fiber optic',
+    'internet_service_type_None']]
+    y_test = test['churn']
+
+
+    print(f"This is the Random Forest Model with a Max Depth of 6\nand ran on the test set.\n")
+    rf = RandomForestClassifier(random_state = 123,max_depth = 6)
+    rf.fit(X_test, y_test)
+    test_acc = rf.score(X_test, y_test)
+    print(f"For a depth of 6, the accuracy is {round(test_acc,2)}")
+    
+    # establish baseline accuracy
+    baseline_accuracy = (y_test == 0).mean()
+    print()
+    print(f'The baseline accuracy is {round(baseline_accuracy,2)}\n')
+    
+    # classification report
+    print(classification_report(y_test, rf.predict(X_test)))
+    
+    print(f"The model beats on baseline.")
+
 # KNN
 def knn_evaluate(X_tr, y_tr, X_va, y_va, nn):
     """This function evaluates the train and validate set on KNN model. This function uses a 
@@ -243,8 +281,11 @@ def logit_evaluate(x_df, y_s):
 # RUN ALL 4 MODELS
 
 
-def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
-    """
+def all_4_classifiers(train, validate, nn):
+    """This function takes in the train, validate, and test dataframes and assigns 
+    the chosen features to X_train, X_validate, X_test, and y_train, y_validate, 
+    and y_test.
+
     This function takes in the train and validate datasets, a KNN number to go 
     to (exclusive) and returns models/visuals/explicit statments for decision tree, 
     random forest, knn, and logistic regression.
@@ -278,6 +319,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     import pandas as pd
     import numpy as np
     import matplotlib.pyplot as plt
+    import explore as ex
     from sklearn.tree import DecisionTreeClassifier
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.metrics import classification_report
@@ -286,18 +328,43 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     import warnings
     warnings.filterwarnings("ignore")
 
+    # assign target feature
+    target = 'churn'
+
+    # X_train, X_validate, X_test, y_train, y_validate, and y_test to be used for modeling
+    X_train = train[[
+    'phone_service',
+    'multiple_lines',
+    'monthly_charges',
+    'total_charges',
+    'contract_type_One year',
+    'contract_type_Two year',
+    'internet_service_type_Fiber optic',
+    'internet_service_type_None']]
+    X_validate = validate[[
+    'phone_service',
+    'multiple_lines',
+    'monthly_charges',
+    'total_charges',
+    'contract_type_One year',
+    'contract_type_Two year',
+    'internet_service_type_Fiber optic',
+    'internet_service_type_None']]
+    y_train = train[target]
+    y_validate = validate[target]
+
     # DECISION TREE
     print(f"DECISION TREE")
     scores_all=[]
     
     for i in range(1,11):
         tree = DecisionTreeClassifier(max_depth=i, random_state=123)
-        tree.fit(X_tr, y_tr)
-        train_acc = tree.score(X_tr, y_tr)
-        print(f"For depth of {i:2}, the accuracy is {round(train_acc,2)}")
+        tree.fit(X_train, y_train)
+        train_acc = tree.score(X_train, y_train)
+        print(f"For depth of {i}, the accuracy is {round(train_acc,2)}")
         
         # evaludate on validate set
-        validate_acc = tree.score(X_va, y_va)
+        validate_acc = tree.score(X_validate, y_validate)
 
         # append to df scores_all
         scores_all.append([i, train_acc, validate_acc])
@@ -307,12 +374,9 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
 
         # make new column
         scores_df['difference'] = scores_df.train_acc - scores_df.validate_acc
-
-        # sort on difference
-        scores_df.sort_values('difference')
         
         # establish baseline accuracy
-    baseline_accuracy = (y_tr == 0).mean()
+    baseline_accuracy = (y_train == 0).mean()
     print()
     print(f'The baseline accuracy is {round(baseline_accuracy,2)}')
           
@@ -321,6 +385,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     plt.plot(scores_df.max_depth, scores_df.train_acc, label='train', marker='o')
     plt.plot(scores_df.max_depth, scores_df.validate_acc, label='validate', marker='o')
     plt.axhline(baseline_accuracy, linewidth=2, color='black', label='baseline')
+    plt.fill_between(scores_df.max_depth, scores_df.train_acc, scores_df.validate_acc, alpha=.4)
     plt.xlabel('Max Depth for Decision Tree')
     plt.ylabel('Accuracy')
     plt.xticks(np.arange(1,11, step=1))
@@ -334,15 +399,15 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
 
     for i in range(1,11):
         rf = RandomForestClassifier(random_state = 123,max_depth = i)
-        rf.fit(X_tr, y_tr)
-        train_acc_rf = rf.score(X_tr, y_tr)
+        rf.fit(X_train, y_train)
+        train_acc_rf = rf.score(X_train, y_train)
         print(f"For depth of {i:2}, the accuracy is {round(train_acc_rf,2)}")
         
         # establish feature importance variable
         important_features = rf.feature_importances_
         
         # evaluate on validate set
-        validate_acc_rf = rf.score(X_va, y_va)
+        validate_acc_rf = rf.score(X_validate, y_validate)
 
         # append to rf scores_all
         scores_rf.append([i, train_acc_rf, validate_acc_rf])
@@ -364,6 +429,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     plt.plot(scores_df2.max_depth, scores_df2.train_acc_rf, label='train', marker='o')
     plt.plot(scores_df2.max_depth, scores_df2.validate_acc_rf, label='validate', marker='o')
     plt.axhline(baseline_accuracy, linewidth=2, color='black', label='baseline')
+    plt.fill_between(scores_df2.max_depth, scores_df2.train_acc_rf, scores_df2.validate_acc_rf, alpha=.4)
     plt.xlabel('Max Depth for Random Forest')
     plt.ylabel('Accuracy')
     plt.xticks(np.arange(1,11, step=1))
@@ -373,7 +439,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     
         # plot feature importance
     plt.figure(figsize=(12,12))
-    plt.bar(X_tr.columns, important_features)
+    plt.bar(X_train.columns, important_features)
     plt.title(f"Feature Importance")
     plt.xlabel(f"Features")
     plt.ylabel(f"Importance")
@@ -382,7 +448,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     
     # KNN
     print(f"KNN")
-    print(f"The number of features sent in : {len(X_tr.columns)} and are {X_tr.columns.tolist()}.")
+    print(f"The number of features sent in : {len(X_train.columns)} and are {X_train.columns.tolist()}.")
 
     # run for loop and plot
     metrics = []
@@ -392,11 +458,11 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
         knn = KNeighborsClassifier(n_neighbors=k, weights='uniform')
         
         # fit the model
-        knn.fit(X_tr, y_tr)
+        knn.fit(X_train, y_train)
         
         # calculate accuracy
-        train_score = knn.score(X_tr, y_tr)
-        validate_score = knn.score(X_va, y_va)
+        train_score = knn.score(X_train, y_train)
+        validate_score = knn.score(X_validate, y_validate)
         
         # append to df metrics
         metrics.append([k, train_score, validate_score])
@@ -421,6 +487,7 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     plt.axvline(x=n, color='black', linestyle='--', linewidth=1, label='best fit neighbor size')
     plt.axhline(y=train_score, color='blue', linestyle='--', linewidth=1, label='train accuracy')
     plt.axhline(y=validate_score, color='orange', linestyle='--', linewidth=1, label='validate accuracy')
+    plt.fill_between(metrics_df.k, metrics_df['train score'], metrics_df['validate score'], alpha=.4)
     plt.ylabel('Accuracy')
     plt.xticks(np.arange(0,nn,1))
     plt.legend()
@@ -435,33 +502,33 @@ def all_4_classifiers(X_tr, y_tr, X_va, y_va, nn):
     logit = LogisticRegression(random_state=123)
 
     #fit it
-    logit.fit(X_tr, y_tr)
+    logit.fit(X_train, y_train)
 
     #use it
-    lt_score = logit.score(X_tr, y_tr)
+    lt_score = logit.score(X_train, y_train)
     print(f"The train model's accuracy is {round(lt_score,2)}")
     
     #baseline
     print(f"The baseline accuracy is {round(baseline_accuracy,2)}.") 
     
     #classification report
-    print(classification_report(y_tr, logit.predict(X_tr)))
+    print(classification_report(y_train, logit.predict(X_train)))
 
-# LOGISTIC REGRESSION VALIDATE
+    # LOGISTIC REGRESSION VALIDATE
     print(f"LOGISTIC REGRESSION")
     print(f"Validate Dataset")
     #create it
     logit2 = LogisticRegression(random_state=123)
 
     #fit it
-    logit2.fit(X_va, y_va)
+    logit2.fit(X_validate, y_validate)
 
     #use it
-    lt_score2 = logit2.score(X_va, y_va)
+    lt_score2 = logit2.score(X_validate, y_validate)
     print(f"The validate model's accuracy is {round(lt_score2,2)}")
 
     #baseline
     print(f"The baseline accuracy is {round(baseline_accuracy,2)}.")
     
     #classification report
-    print(classification_report(y_va, logit2.predict(X_va)))
+    print(classification_report(y_validate, logit2.predict(X_validate)))
