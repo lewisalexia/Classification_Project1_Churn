@@ -24,18 +24,18 @@ def get_connection(db):
 
 
 
-def check_file_exists(fn, query, url):
+def check_file_exists(filename, query, url):
     """
     Check if file exists in my local directory, if not, pull from MySQL DB
     return dataframe (from Misty Garcia, thank you!)
     """
-    if os.path.isfile(fn):
-        print('csv file found and loaded')
-        return pd.read_csv(fn, index_col=0)
+    if os.path.isfile(filename):
+        print('CSV file found...')
+        return pd.read_csv(filename, index_col=0)
     else: 
-        print('creating df and exporting csv')
+        print('Creating DF / Exporting CSV...')
         df = pd.read_sql(query, url)
-        df.to_csv(fn)
+        df.to_csv(filename)
         return df 
 
 
@@ -44,6 +44,7 @@ def get_telco_churn():
     """This function pings mySQL to grab the Telco data from the database using
     env.py credentials and url function.
     """
+    import env as env
     url = env.get_connection('telco_churn')
     query = ''' select * from customers
 	join contract_types
@@ -55,7 +56,7 @@ def get_telco_churn():
         '''
     filename = 'telco_churn.csv'
     df = check_file_exists(filename, query, url)
-    print(f'Load in successful, awaiting commands...')
+    print(f'Load in successful, preparing to split...')
     return df
 
 
