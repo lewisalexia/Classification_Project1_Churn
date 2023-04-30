@@ -17,13 +17,16 @@ from sklearn.model_selection import train_test_split
 
 
 def get_connection(db):
+    """
+    Establishes connection to MySQL server using env.py credentials
+    """
     return f'mysql+pymysql://{env.user}:{env.password}@{env.host}/{db}'
 
 
 
 def check_file_exists(fn, query, url):
     """
-    check if file exists in my local directory, if not, pull from sql db
+    Check if file exists in my local directory, if not, pull from MySQL DB
     return dataframe (from Misty Garcia, thank you!)
     """
     if os.path.isfile(fn):
@@ -34,7 +37,6 @@ def check_file_exists(fn, query, url):
         df = pd.read_sql(query, url)
         df.to_csv(fn)
         return df 
-
 
 
 
@@ -61,7 +63,9 @@ def get_telco_churn():
 # PREPARE FUNCTIONS
 
 def clean_telco(df):
-    '''This function will clean the telco_churn data'''
+    '''
+    This function will clean the telco_churn data for this iteration.
+    '''
     
     #convert total charges to float
     df.total_charges = pd.to_numeric(df['total_charges'], errors='coerce')
@@ -109,7 +113,6 @@ def clean_telco(df):
 
 
 # SPLIT FUNCTION
-
 
 
 def split_telco(df):

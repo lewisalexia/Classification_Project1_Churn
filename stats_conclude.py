@@ -3,13 +3,14 @@ from scipy import stats
 # STATS CONCLUSIONS FUNCTIONS 
 
 
-def chi2_test(table):
-    """This function sets alpha to 0.05, runs a chi^2 test, and evaluates the pvalue 
-    against alpha, printing a conclusion statement.
-    
-    This function takes in a pd.crosstab table to analyze.
+def chi2_test(df):
+    """This function sets alpha to 0.05, creates a table, runs a chi^2 test, 
+    and evaluates the pvalue against alpha, printing a conclusion statement.
     """
+    import pandas as pd
     α = 0.05
+    table = pd.crosstab(df.phone_service, 
+                       df['internet_service_type_Fiber optic'])
     chi2, pval, degf, expected = stats.chi2_contingency(table)
     # print('Observed')
     # print(table.values)
@@ -18,7 +19,7 @@ def chi2_test(table):
     # print('\n----')
     # print(f'chi^2 = {chi2:.4f}')
     # print(f'p-value = {pval} < {α}')
-    print('----')
+    # print('----')
     if pval < α:
         print ('We reject the null hypothesis. Phone and Fiber are related.')
     else:

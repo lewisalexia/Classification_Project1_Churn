@@ -161,34 +161,47 @@ def box_plot_monthly_multiple(df):
                 y=df.monthly_charges, hue=df.churn)
     plt.title('Houston, We Have a Problem...')
     plt.axhline(y=df.monthly_charges.mean(), label='Average Monthly Charge', color='red', linewidth=2)
+    plt.xticks([0, 1], ['No', 'Yes'])
+    plt.legend([0, 1], ['No', 'Yes'])
     plt.show()
 
 
 def phone_fiber(df):
     """This function displays that all fiber customers have phone service.
-
-    Explicitly states as well.
     """
     sns.barplot(data=df, x='phone_service', y='internet_service_type_Fiber optic')
     plt.title('All Fiber Customers Have Phone Service')
+    plt.xticks([0, 1], ['No', 'Yes'])
+    plt.ylabel('Fiber Internet')
+    plt.xlabel('Phone Service')
     plt.show()
 
 def monthly_phone_churn(df):
+    """This function displays the churn rate of customers with one or more lines of phone
+    service.
+    """
     sns.barplot(data=df, x='churn', \
     y='contract_type', hue='multiple_lines')
     plt.axvline(x=df['churn'].mean(), label='Average Churn Rate', color='red', linewidth=2)
-    plt.title('Monthly Phone Contracts Well Above Average Churn Rate')
+    plt.title('Phone Contracts Well Above Average Churn Rate')
     plt.legend()
     plt.show()
 
 
 def fiber_average_cost(df):
+    """This function displays churn customers being charged more than average monthly price.
+    """
     sns.scatterplot(data=df, x='monthly_charges', y='total_charges', hue='phone_service')
     plt.axvline(x=df['monthly_charges'].mean(), label='Average Churn Rate', color='red', linewidth=2)
     plt.title('There Is Wiggle Room To Reduce Price')
     plt.show()
 
 def monthly_contract(df):
+    """This function displays the slope of charge for phone customers. The purpose is to
+    show there is room to level the price.
+    """
     sns.scatterplot(data=df, x='monthly_charges', y='total_charges', hue='contract_type')
     plt.title('Monthly Contracts Make Up Majority of Customer Base')
+    plt.xlabel('Monthly Charges')
+    plt.ylabel('Total Charges')
     plt.show()
