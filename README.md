@@ -28,11 +28,10 @@ My initial hypothesis is that internet customers are churning because of monthly
  
 * Explore data in search of drivers of churn
    * Answer the following initial questions:
-       * How often does churn occur?
-       * Does contract type affect churn?
-       * Does multiple services affect churn?
-       * Does internet type affect churn?
-       * Are any columns dependent on others?
+       1. Is phone service and fiber internet related in any way?
+       2. From a revenue standpoint, where should we focus our initial efforts?
+       3. Are month to month contracts causing churn? Why?
+       4. Were average monthly charges higher for churned members?
        
 * Develop a Model to predict if a customer will churn:
    * Use drivers identified in the explore phase to build predictive models of different types.
@@ -63,13 +62,12 @@ My initial hypothesis is that internet customers are churning because of monthly
 4) Run notebook.
  
 # Takeaways and Conclusions
-* 
-* 
-* 
-* 
-*
+* Everyone who has fiber internet, has phone service. These are related features.
+* Cost of monthly one-line phone service negatviely affects fiber internet metrics.
+* 1,297 churned phone customers cost Telco 2.6 million dollars.
+* The churn culprit is the one-line, month-to-month, phone contracts.
+* There is wiggle room to reduce the price to stem the bleeding.
  
 # Recommendations
-* 
-* 
-* 
+* There is wiggle room to reduce the price to stem the bleeding.
+* Reduce cost by $10 to even the slope a bit.
