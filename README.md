@@ -28,7 +28,7 @@ My initial hypothesis is that internet customers are churning because of monthly
  
 * Explore data in search of drivers of churn
    * Answer the following initial questions:
-       1. Is phone service and fiber internet related in any way?
+       1. Are phone service and fiber internet related in any way?
        2. From a revenue standpoint, where should we focus our initial efforts?
        3. Are month to month contracts causing churn? Why?
        4. Were average monthly charges higher for churned members?
